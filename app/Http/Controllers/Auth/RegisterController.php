@@ -53,8 +53,7 @@ class RegisterController extends Controller
             'name'                  => 'required|max:255',
             'username'              => 'required|min:6|max:255|alpha_dash|unique:users',
             'email'                 => 'required|email|max:255|unique:users',
-            'password'              => 'required|min:6',
-            'password_confirmation' => 'immigration:empty',
+            'password'              => 'required|min:6|confirmed',
             'captcha'               => 'required|immigration:interval,4',
         ]);
     }

@@ -11,7 +11,8 @@
   <title>{{ config('app.name', 'Authv') }}</title>
 
   <!-- Styles -->
-  <link href="/css/app.css" rel="stylesheet">
+<!--   <link href="/css/app.css" rel="stylesheet"> -->
+  <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
   <!-- Scripts -->
   <script>
@@ -23,6 +24,6 @@
 <body>
   @yield('body')
   <snackbar v-ref:abc></snackbar>
-  <script src="/js/app.js"></script>
+    <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>
