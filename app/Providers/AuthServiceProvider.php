@@ -27,5 +27,10 @@ class AuthServiceProvider extends ServiceProvider
 
         //
         Passport::routes();
+
+        Passport::tokensCan([
+        		'basic-info' => 'Access your Name and E-mail'
+        ]);
+
     }
 }
