@@ -5,6 +5,16 @@
 <!-- 	<div class="idp-list-small">@include('auth.social')</div> -->
 <!-- 	<div class="mdl-layout-spacer"></div> -->
 <!-- </div> -->
+@if (session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
+@if (session('warning'))
+    <div class="alert alert-warning">
+        {{ session('warning') }}
+    </div>
+@endif
 <div class="mdl-grid">
 	<div class="mdl-layout-spacer"></div>
 	<form class="form-vertical" role="form" method="POST"

@@ -24,3 +24,6 @@ Auth::routes();
 Authv::routes();
 
 Route::get('/home', 'HomeController@index');
+
+// temp added
+Route::get('user/activation/{token}', 'Auth\LoginController@activateUser')->name('user.activate');

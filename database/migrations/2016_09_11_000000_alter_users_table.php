@@ -17,6 +17,7 @@ class AlterUsersTable extends Migration
             $table->string('name')->nullable()->change();
             $table->string('username')->nullable()->unique()->after('name');
             $table->string('password')->nullable()->change();
+            $table->boolean('activated')->default(false);
         });
     }
 
