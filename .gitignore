@@ -8,3 +8,41 @@ Homestead.yaml
 .env
 
 /storage/oauth-*.key
+
+# This is taken from github master git ignore project  by Amol
+vendor/
+node_modules/
+npm-debug.log
+
+# Laravel 5 & Lumen specific
+public/storage
+public/hot
+storage/*.key
+.env.*.php
+.env.php
+.env
+Homestead.yaml
+Homestead.json
+
+# Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
+.rocketeer/
+
+#=======================================
+# Eclipse Core Excludes
+#=======================================
+
+.project
+.metadata
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
+.buildpath
+.editorconfig
+.settings
+.DS_Store
+.idea
