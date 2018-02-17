@@ -7,60 +7,57 @@ use Illuminate\Mail\Message;
 
 class ActivationService
 {
+    protected $mailer;
 
-	protected $mailer;
+    protected $activationRepo;
 
-	protected $activationRepo;
+    protected $resendAfter = 24;
 
-	protected $resendAfter = 24;
+    public function __construct(Mailer $mailer, ActivationRepository $activationRepo)
+    {
+        $this->mailer = $mailer;
+        $this->activationRepo = $activationRepo;
+    }
 
-	public function __construct(Mailer $mailer, ActivationRepository $activationRepo)
-	{
-		$this->mailer = $mailer;
-		$this->activationRepo = $activationRepo;
-	}
+    public function sendActivationMail($user)
+    {
+        if ($user->activated || !$this->shouldSend($user)) {
+            return;
+        }
 
-	public function sendActivationMail($user)
-	{
+        $token = $this->activationRepo->createActivation($user);
 
-		if ($user->activated || !$this->shouldSend($user)) {
-			return;
-		}
+        $link = route('user.activate', $token);
+        $message = sprintf('Activate account <a href="%s">%s</a>', $link, $link);
 
-		$token = $this->activationRepo->createActivation($user);
+        $this->mailer->raw($message, function (Message $m) use ($user) {
+            $m->to($user->email)->subject('Activation mail');
+        });
+    }
 
-		$link = route('user.activate', $token);
-		$message = sprintf('Activate account <a href="%s">%s</a>', $link, $link);
+    public function activateUser($token)
+    {
+        $activation = $this->activationRepo->getActivationByToken($token);
 
-		$this->mailer->raw($message, function (Message $m) use ($user) {
-			$m->to($user->email)->subject('Activation mail');
-		});
-	}
+        if ($activation === null) {
+            return;
+        }
 
-	public function activateUser($token)
-	{
-		$activation = $this->activationRepo->getActivationByToken($token);
+        $user = User::find($activation->user_id);
 
-		if ($activation === null) {
-			return null;
-		}
+        $user->activated = true;
 
-		$user = User::find($activation->user_id);
+        $user->save();
 
-		$user->activated = true;
+        $this->activationRepo->deleteActivation($token);
 
-		$user->save();
+        return $user;
+    }
 
-		$this->activationRepo->deleteActivation($token);
+    private function shouldSend($user)
+    {
+        $activation = $this->activationRepo->getActivation($user);
 
-		return $user;
-
-	}
-
-	private function shouldSend($user)
-	{
-		$activation = $this->activationRepo->getActivation($user);
-		return $activation === null || strtotime($activation->created_at) + 60 * 60 * $this->resendAfter < time();
-	}
-
+        return $activation === null || strtotime($activation->created_at) + 60 * 60 * $this->resendAfter < time();
+    }
 }

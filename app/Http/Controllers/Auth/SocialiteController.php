@@ -12,56 +12,56 @@ use Socialite;
 class SocialiteController extends Controller
 {
     /**
-   * Redirect the user to the Provider's authentication page.
-   *
-   * @return Response
-   */
-  public function redirectTo(Request $request, $providerName)
-  {
-      return Socialite::driver($providerName)->redirect();
-  }
+     * Redirect the user to the Provider's authentication page.
+     *
+     * @return Response
+     */
+    public function redirectTo(Request $request, $providerName)
+    {
+        return Socialite::driver($providerName)->redirect();
+    }
 
-  /**
-   * Obtain the user information from Provider.
-   *
-   * @return Response
-   */
-  public function handleCallback(Request $request, $providerName)
-  {
-      $provider = OAuth\Provider::where('name', $providerName)->first();
-      $puser = Socialite::driver($providerName)->user();
-      $ouser = $provider->users()->where('id', $puser->getId())->first();
-      if ($ouser == null) {
-          $ouser = $this->create($provider->id, $puser);
-      }
-      $existingUser = true;
-      if ($ouser->user_id) {
-          Auth::loginUsingId($ouser->user_id, true);
-      } else {
-          if ($ouser->email) {
-              $user = App\User::where('email', $ouser->email)->first();
-              if ($user == null) {
-                  $data = ['email'    => $ouser->email];
-                  if ($ouser->name) {
-                      $data['name'] = $ouser->name;
-                  }
-                  $user = App\User::create($data);
-                  $existingUser = false;
-              }
-              $ouser->user_id = $user->id;
-              $ouser->save();
-              Auth::login($user, true);
-          } else {
-              $request->session()->put('oauth_user_id', $ouser->id);
-              $existingUser = false;
-          }
-      }
-      if ($existingUser) {
-          return $this->redirectAfterLogin();
-      } else {
-          return redirect()->route('complete-profile');
-      }
-  }
+    /**
+     * Obtain the user information from Provider.
+     *
+     * @return Response
+     */
+    public function handleCallback(Request $request, $providerName)
+    {
+        $provider = OAuth\Provider::where('name', $providerName)->first();
+        $puser = Socialite::driver($providerName)->user();
+        $ouser = $provider->users()->where('id', $puser->getId())->first();
+        if ($ouser == null) {
+            $ouser = $this->create($provider->id, $puser);
+        }
+        $existingUser = true;
+        if ($ouser->user_id) {
+            Auth::loginUsingId($ouser->user_id, true);
+        } else {
+            if ($ouser->email) {
+                $user = App\User::where('email', $ouser->email)->first();
+                if ($user == null) {
+                    $data = ['email'    => $ouser->email];
+                    if ($ouser->name) {
+                        $data['name'] = $ouser->name;
+                    }
+                    $user = App\User::create($data);
+                    $existingUser = false;
+                }
+                $ouser->user_id = $user->id;
+                $ouser->save();
+                Auth::login($user, true);
+            } else {
+                $request->session()->put('oauth_user_id', $ouser->id);
+                $existingUser = false;
+            }
+        }
+        if ($existingUser) {
+            return $this->redirectAfterLogin();
+        } else {
+            return redirect()->route('complete-profile');
+        }
+    }
 
     public function redirectAfterLogin()
     {

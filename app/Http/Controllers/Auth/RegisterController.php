@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\ActivationService;
 use App\Http\Controllers\Controller;
 use App\Traits\Auth\SendsEmailConfirmations;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use App\ActivationService;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
@@ -46,8 +46,8 @@ class RegisterController extends Controller
 
     public function __construct(ActivationService $activationService)
     {
-    	$this->middleware('guest', ['except' => 'logout']);
-    	$this->activationService = $activationService;
+        $this->middleware('guest', ['except' => 'logout']);
+        $this->activationService = $activationService;
     }
 
     /**
@@ -83,26 +83,25 @@ class RegisterController extends Controller
             'email'    => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
-        #$this->sendEmailConfirmation($user);
+        //$this->sendEmailConfirmation($user);
 
         return $user;
     }
 
-
     public function register(Request $request)
     {
-    	$validator = $this->validator($request->all());
+        $validator = $this->validator($request->all());
 
-    	if ($validator->fails()) {
-    		$this->throwValidationException(
-    				$request, $validator
-    				);
-    	}
+        if ($validator->fails()) {
+            $this->throwValidationException(
+                    $request, $validator
+                    );
+        }
 
-    	$user = $this->create($request->all());
+        $user = $this->create($request->all());
 
-    	$this->activationService->sendActivationMail($user);
+        $this->activationService->sendActivationMail($user);
 
-    	return redirect('/login')->with('status', 'We sent you an activation code. Check your email.');
+        return redirect('/login')->with('status', 'We sent you an activation code. Check your email.');
     }
 }
