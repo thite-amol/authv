@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
+use App\ActivationService;
 use App\Http\Controllers\Controller;
 use App\Traits\Auth\AuthenticatesUsers;
-use App\ActivationService;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -38,26 +38,29 @@ class LoginController extends Controller
      */
     public function __construct(ActivationService $activationService)
     {
-    	$this->middleware('guest', ['except' => 'logout']);
-    	$this->activationService = $activationService;
+        $this->middleware('guest', ['except' => 'logout']);
+        $this->activationService = $activationService;
     }
 
     public function authenticated(Request $request, $user)
     {
-    	if (!$user->activated) {
-    		$this->activationService->sendActivationMail($user);
-    		auth()->logout();
-    		return back()->with('warning', 'You need to confirm your account. We have sent you an activation code, please check your email.');
-    	}
-    	return redirect()->intended($this->redirectPath());
+        if (!$user->activated) {
+            $this->activationService->sendActivationMail($user);
+            auth()->logout();
+
+            return back()->with('warning', 'You need to confirm your account. We have sent you an activation code, please check your email.');
+        }
+
+        return redirect()->intended($this->redirectPath());
     }
 
     public function activateUser($token)
     {
-    	if ($user = $this->activationService->activateUser($token)) {
-    		auth()->login($user);
-    		return redirect($this->redirectPath());
-    	}
-    	abort(404);
+        if ($user = $this->activationService->activateUser($token)) {
+            auth()->login($user);
+
+            return redirect($this->redirectPath());
+        }
+        abort(404);
     }
 }

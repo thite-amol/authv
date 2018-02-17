@@ -48,14 +48,14 @@ class Authv extends Facade
 
     public static function immigrationFields()
     {
-    	/*$html = '<div id="immigration" class="hidden">'."\r\n".
+        /*$html = '<div id="immigration" class="hidden">'."\r\n".
     			'<input name="password_confirmation" type="text" value="" id="password-confirm" />'."\r\n".
     			'<input name="captcha" type="text" id="captcha" value="'.Crypt::encrypt(time()).'"/>'."\r\n".
     			'</div>';
     	*/
-    	$html = '<div id="immigration" class="hidden">'."\r\n".
-    			'<input name="captcha" type="text" id="captcha" value="'.Crypt::encrypt(time()).'"/>'."\r\n".
-    			'</div>';
+        $html = '<div id="immigration" class="hidden">'."\r\n".
+                '<input name="captcha" type="text" id="captcha" value="'.Crypt::encrypt(time()).'"/>'."\r\n".
+                '</div>';
 
         return $html;
     }
